@@ -35,7 +35,7 @@ def scurve(order, y, t_axis, scale, space, total, plot = True):
 def MotionControl(dist, total_time, order=3, space=2, plot = False):
     # Generate only the first section of the piecewise function to save runtime
     start = time.time()
-    scale = int(5**order/order+50)
+    scale = (space+2)*100
     peak = 2**order
     change = peak/2
     const = peak*space/2
@@ -96,12 +96,14 @@ def MotionControl(dist, total_time, order=3, space=2, plot = False):
     print(time.time()-start)
 
 # Testing MotionControl
-MotionControl(5, 1, 2, 2, plot = True)
+#MotionControl(5, 1, 2, 2, plot = True)
+#MotionControl(35, 40, 2, 2, plot = True)
 #MotionControl(100, plot = True)
 #MotionControl(10, 20, 4, 3, plot = True)
 #MotionControl(420, 30, 5, 4, plot = True)
 #MotionControl(50, 10, 6, 4, plot = True)
 #MotionControl(50, 10, 7, 2, plot = True)
-#MotionControl(1000, 80, 8, 2)
+MotionControl(50, 90, 10, 2, plot = True)
+#MotionControl(1000, 60, 15, 2)
 #sum1 = summary.summarize(all_objects)
 #summary.print_(sum1)
