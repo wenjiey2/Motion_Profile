@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 import time
+from scipy.ndimage import interpolation
 #from pympler import summary
 #from pympler import muppy
 
@@ -17,6 +18,7 @@ def scurve(order, y, t_axis, scale, space, total, plot = True):
     extra = space
     for i in range(order):
         curr = integrate.cumtrapz(curr, t, initial = 0)
+        curr = np.round(curr, 3)
         if(t[-1]*2 < total):
             curr = curr[:len(curr)-1]
             extra = extra*2
@@ -35,13 +37,13 @@ def scurve(order, y, t_axis, scale, space, total, plot = True):
 def MotionControl(dist, total_time, order=3, space=2, plot = False):
     # Generate only the first section of the piecewise function to save runtime
     start = time.time()
-    scale = (space+2)*100
+    l = 2+space
+    scale = 100
     peak = 2**order
     change = peak/2
     const = peak*space/2
     for i in range(order-1):
         change += peak/(2**(i+2))*space*(2**i)
-    l = 2+space
     total = int(2*change+const)
     t_axis = np.linspace(0., l, l*scale+1)
     print(time.time()-start)
@@ -78,7 +80,12 @@ def MotionControl(dist, total_time, order=3, space=2, plot = False):
     # Scale displacement scurve based on actual displacement & total time
     dr = dist/d[-1]
     tr = total_time/total
-    t_axis = np.linspace(0., total*tr, total*scale+1)
+    if(tr < 1):
+        d = d[0:len(d):int(1/tr)]
+        t_axis = np.linspace(0., total*tr, len(d))
+    else:
+        d = interpolation.zoom(d,tr)
+        t_axis = np.linspace(0., total*tr, len(d))
     d = d*dr
     if(plot):
         plt.figure()
@@ -101,9 +108,9 @@ def MotionControl(dist, total_time, order=3, space=2, plot = False):
 #MotionControl(100, plot = True)
 #MotionControl(10, 20, 4, 3, plot = True)
 #MotionControl(420, 30, 5, 4, plot = True)
-#MotionControl(50, 10, 6, 4, plot = True)
-#MotionControl(50, 10, 7, 2, plot = True)
-MotionControl(50, 90, 10, 2, plot = True)
-#MotionControl(1000, 60, 15, 2)
+MotionControl(50, 900, 2, 2, plot = True)
+#MotionControl(50, 90, 5, 2, plot = True)
+#MotionControl(50, 90, 10, 2, plot = True)
+#MotionControl(1000, 60, 17, 2)
 #sum1 = summary.summarize(all_objects)
 #summary.print_(sum1)
